@@ -1,0 +1,21 @@
+name: ai-image-understanding-content-matching
+title: AI Image Understanding & Content Matching Engine
+description: >
+  Backend system that understands images and matches relevant images
+  to blog posts using vision AI, embeddings, semantic similarity,
+  and a mismatch guard.
+
+stack:
+  runtime: Node.js
+  framework: Express
+  database: PostgreSQL
+  validation: Zod
+  database_runtime: Docker
+
+phases:
+  - design
+  - image-understanding
+  - matching-engine
+  - production-layer
+
+status: in-progress
