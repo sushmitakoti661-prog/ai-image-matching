@@ -1,10 +1,14 @@
 require("dotenv").config();
 const express = require("express");
 
+const imageRoutes = require("./src/routes/imageRoutes");
+const costRoutes = require("./src/routes/costRoutes");
+
 const app = express();
 
 app.use(express.json());
 
+// Health check endpoint
 app.get("/health", (req, res) => {
   res.json({
     status: "ok",
@@ -12,6 +16,10 @@ app.get("/health", (req, res) => {
     timestamp: new Date().toISOString()
   });
 });
+
+// Mount routes
+app.use("/images", imageRoutes);
+app.use("/costs", costRoutes);
 
 const PORT = process.env.PORT || 3000;
 

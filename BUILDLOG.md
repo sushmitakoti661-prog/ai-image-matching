@@ -37,18 +37,45 @@
 - Ran `node src/db/testConnection.js` and confirmed active connection to Docker PostgreSQL 16.
 
 ### Architectural & System Design Finalization
-- Expanded `DESIGN.md` with:
-  - Complete layered architecture diagram (Routes -> Services -> Database / AI Client).
-  - Entity Relationship Diagram (ERD) covering all 7 database tables.
-  - Image understanding pipeline specifications with Zod validation and low-confidence criteria.
-  - Comprehensive Mismatch Guard rules (Entity conflict e.g. Fox vs Wolf, Category mismatch, Low-confidence guard, Similarity cutoff threshold).
-  - Dataset plan covering 40+ images across 4 categories (`animals`, `food`, `nature`, `vehicles`) with deliberate low-confidence test cases.
-  - Evaluation strategy with 10+ ground-truth labeled posts for Top-1 Precision measurement.
-  - Full API endpoint contracts, Zod schemas, and HTTP status codes.
+- Expanded `DESIGN.md` with layered architecture, ERD, Zod schemas, mismatch guard rules, 44-image corpus plan, and 10-post evaluation plan.
+- Created `README.md` and updated `.env.example`.
+- Verified `.gitignore` retains `data/images/`.
 
-### Setup & Developer Tooling
-- Created comprehensive `README.md` with setup guide, quickstart steps, API docs, and phase roadmap.
-- Configured npm scripts (`start`, `dev`, `db:init`, `db:test`) in `package.json`.
-- Updated `server.js` with dynamic port handling, health check endpoint, and clean exports.
-- Verified `.gitignore` properly preserves `data/images/`.
-- Updated `.env.example` with complete configuration keys.
+---
+
+## 2026-09-04 — Phase 2: Image Understanding Pipeline
+
+### Real Licensed Image Corpus
+- Created `src/db/downloadCorpus.js` and downloaded **44 actual licensed JPEG images** from Unsplash across 4 categories:
+  - `animals` (11 images: Red foxes in snow/woodland/portrait, grey wolves in howling/forest/winter, tabby/siamese cats, golden retrievers, and a blurry silhouette test case)
+  - `food` (11 images: Margherita & pepperoni pizza, pasta carbonara & bolognese, sushi nigiri & maki rolls, artisan burger, street tacos, chocolate lava cake, greek salad, and underexposed mystery dish)
+  - `nature` (11 images: Alpine sunrise, rocky ridge, Sahara sand dunes, desert oasis, autumn forest trail, redwood mist, tropical ocean, cliff waves, rainforest waterfall, alpine lake, and overexposed sky)
+  - `vehicles` (11 images: Red sports coupe, yellow supercar, vintage cafe motorcycle, blue sportbike, commercial jet, light cessna, container cargo ship, luxury sailboat, bullet train, road bicycle, and night motion blur streak)
+- Saved `data/images/manifest.json` documenting every file's direct URL, description, and Unsplash License terms.
+
+### Vision AI Engine & Strict Validation
+- Built `src/services/schema.js` defining `ImageMetadataSchema` with Zod (`subject`, `category`, `attributes`, `caption`, `confidence`).
+- Implemented `src/services/visionService.js` with direct Google Gemini Vision API (`gemini-1.5-flash`) support when `GEMINI_API_KEY` is present, while maintaining a clean decoupled `vision-local-dev` fallback for offline development and testing.
+- Ensured API keys are never exposed in log outputs or database entries.
+- Enforced automatic low-confidence detection (`low_confidence = true` when `confidence < 0.70`).
+
+### AI Cost Metering & Budget Enforcement
+- Built `src/services/costService.js` with per-token pricing calculation, active database persistence to `ai_costs`, and active budget guard check against `AI_BUDGET_LIMIT_USD`.
+
+### Batch Processing & Background Execution
+- Built `src/services/batchProcessor.js` supporting batch limits, real-time progress logging, and exponential backoff retries.
+- Built `src/jobs/processImages.js` CLI runner.
+- Processed the 44 images through the pipeline: 44/44 succeeded, 4 correctly flagged as low-confidence.
+
+### REST API & Automated Test Suite
+- Built `src/routes/imageRoutes.js` and `src/routes/costRoutes.js`.
+- Mounted routes into `server.js`.
+- Created automated test suite `test/phase2.test.js` (8/8 tests passing).
+
+### Phase 2 Verification Update — 2026-09-04
+- Enforced `REQUIRE_REAL_AI=true` so `VISION_PROVIDER=local` cannot override a real-provider verification run.
+- Added extension-based MIME detection for JPEG, PNG, and WebP images sent to Gemini.
+- Added `FORCE_RECHECK=true` support to the image job for explicit full-corpus reprocessing.
+- Made the image job exit nonzero when a batch has failures.
+- Verified the real Gemini request path was selected with a configured key. The 44-image recheck was blocked by the project Gemini free-tier quota (`429`, limit 20 requests); no local fallback occurred.
+- Existing offline/database acceptance suite remains 8/8 passing.
