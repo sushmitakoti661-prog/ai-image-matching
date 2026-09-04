@@ -79,3 +79,6 @@
 - Made the image job exit nonzero when a batch has failures.
 - Verified the real Gemini request path was selected with a configured key. The 44-image recheck was blocked by the project Gemini free-tier quota (`429`, limit 20 requests); no local fallback occurred.
 - Existing offline/database acceptance suite remains 8/8 passing.
+- Added an explicit `IMAGE_FILENAMES` allowlist for representative real-provider verification without changing normal batch behavior.
+- Attempted the four-image representative run (`fox_woodland_1.jpg`, `wolf_howling_1.jpg`, `golden_retriever_park_1.jpg`, and `animal_silhouette_blurry.jpg`) with `REQUIRE_REAL_AI=true`; all four Gemini requests returned `429 Too Many Requests` because the free-tier quota remained exhausted. No metadata or cost records were created from failed calls, and no local fallback occurred.
+- A trial with `gemini-2.5-flash` was rejected by Gemini with `404 Not Found` because that model is unavailable to this account; the configured `gemini-3.6-flash` run was then restored and remained quota-blocked.

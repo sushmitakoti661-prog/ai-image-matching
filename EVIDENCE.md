@@ -83,6 +83,17 @@ Discovered/verified 44 images in corpus.
 
 Real-provider verification was then run with `REQUIRE_REAL_AI=true FORCE_RECHECK=true npm run images:process`. Gemini was reached using the configured real provider, but the project exceeded its free-tier request quota after 20 requests and returned HTTP 429 responses. The batch completed with 0 newly processed and 44 failed images; no local fallback occurred. A successful 44-image Gemini verification remains blocked until the Gemini quota is available.
 
+### 2a. Representative Real-Provider Verification Attempt
+
+To minimize quota usage, the job was extended with an explicit `IMAGE_FILENAMES` allowlist. The following representative subset was submitted through the real Gemini path with `REQUIRE_REAL_AI=true`:
+
+- `fox_woodland_1.jpg`
+- `wolf_howling_1.jpg`
+- `golden_retriever_park_1.jpg`
+- `animal_silhouette_blurry.jpg`
+
+The configured `gemini-3.6-flash` model returned HTTP 429 for all four images, including all configured retries. The run produced 0 metadata results and 4 failures. No local output was accepted, and no cost records were created for failed provider calls. This verifies provider selection, request submission, retries, progress reporting, and safe rejection, but it does not satisfy the successful real-metadata portion of the Phase 2 gate. The full 44-image run remains quota-blocked.
+
 ### 3. Validated Structured Image Metadata (Database Samples)
 
 #### Sample 1: Red Fox Image (`fox_woodland_1.jpg`)

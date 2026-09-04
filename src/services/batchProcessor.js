@@ -6,10 +6,12 @@ const { getCostSummary } = require("./costService");
  * Process a batch of images through Vision AI pipeline with retries, progress tracking, and cost budget guards.
  */
 async function processBatch(options = {}) {
-  const { batchSize = 50, maxRetries = 3, forceRecheck = false } = options;
+  const { batchSize = 50, maxRetries = 3, forceRecheck = false, images = null } = options;
 
   let imagesToProcess = [];
-  if (forceRecheck) {
+  if (Array.isArray(images)) {
+    imagesToProcess = images.slice(0, batchSize);
+  } else if (forceRecheck) {
     imagesToProcess = await getAllImages();
   } else {
     imagesToProcess = await getPendingImages(batchSize);
