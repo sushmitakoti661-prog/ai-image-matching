@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 
 const app = express();
@@ -5,11 +6,19 @@ const app = express();
 app.use(express.json());
 
 app.get("/health", (req, res) => {
-  res.json({ status: "ok" });
+  res.json({
+    status: "ok",
+    service: "ai-image-understanding-content-matching",
+    timestamp: new Date().toISOString()
+  });
 });
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+if (process.env.NODE_ENV !== "test") {
+  app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;

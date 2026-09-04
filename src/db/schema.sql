@@ -65,3 +65,18 @@ CREATE TABLE IF NOT EXISTS reviews (
 
 CREATE INDEX IF NOT EXISTS idx_reviews_suggestion_id
 ON reviews(suggestion_id);
+
+CREATE TABLE IF NOT EXISTS ai_costs (
+  id SERIAL PRIMARY KEY,
+  operation TEXT NOT NULL,
+  entity_type TEXT,
+  entity_id INTEGER,
+  model TEXT NOT NULL,
+  prompt_tokens INTEGER DEFAULT 0,
+  completion_tokens INTEGER DEFAULT 0,
+  estimated_cost_usd NUMERIC(8,6) DEFAULT 0.0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_ai_costs_operation
+ON ai_costs(operation);

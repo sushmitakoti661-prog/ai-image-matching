@@ -1,4 +1,23 @@
+# Dependencies
 node_modules/
+
+# Environment Variables
 .env
-data/
+.env.local
+.env.*.local
+
+# Logs
 *.log
+npm-debug.log*
+
+# Database & Temporary Data Files
+data/*.db
+data/*.sqlite
+data/*.sqlite3
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+
+# Ensure image corpus directory is tracked
+!data/images/
