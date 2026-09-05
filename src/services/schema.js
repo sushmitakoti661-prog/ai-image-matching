@@ -53,6 +53,10 @@ const SuggestionResultSchema = z.object({
   explanation: z.string().min(1)
 });
 
+const ReviewDecisionSchema = z.object({
+  decision: z.enum(["approved", "rejected"])
+});
+
 module.exports = {
   ImageMetadataSchema,
   RegisterImageSchema,
@@ -61,5 +65,6 @@ module.exports = {
   EmbeddingVectorSchema,
   EmbeddingSchema,
   MatchRequestSchema,
-  SuggestionResultSchema
+  SuggestionResultSchema,
+  ReviewDecisionSchema
 };

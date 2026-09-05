@@ -12,7 +12,9 @@
     "images:download": "node src/db/downloadCorpus.js",
     "images:process": "node src/jobs/processImages.js",
     "test": "node test/phase2.test.js",
-    "test:phase3": "node test/phase3.test.js"
+    "test:phase3": "node test/phase3.test.js",
+    "evaluate": "node src/jobs/evaluateMatching.js",
+    "test:phase4": "node test/phase4.test.js"
   },
   "keywords": [],
   "author": "",

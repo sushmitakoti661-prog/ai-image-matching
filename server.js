@@ -5,6 +5,7 @@ const imageRoutes = require("./src/routes/imageRoutes");
 const costRoutes = require("./src/routes/costRoutes");
 const postRoutes = require("./src/routes/postRoutes");
 const matchingRoutes = require("./src/routes/matchingRoutes");
+const reviewRoutes = require("./src/routes/reviewRoutes");
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use("/images", imageRoutes);
 app.use("/costs", costRoutes);
 app.use("/posts", postRoutes);
 app.use("/posts", matchingRoutes);
+app.use("/suggestions", reviewRoutes);
 
 const PORT = process.env.PORT || 3000;
 

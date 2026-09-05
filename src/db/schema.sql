@@ -69,6 +69,9 @@ CREATE TABLE IF NOT EXISTS reviews (
 CREATE INDEX IF NOT EXISTS idx_reviews_suggestion_id
 ON reviews(suggestion_id);
 
+CREATE UNIQUE INDEX IF NOT EXISTS idx_reviews_suggestion_unique
+ON reviews(suggestion_id);
+
 CREATE TABLE IF NOT EXISTS ai_costs (
   id SERIAL PRIMARY KEY,
   operation TEXT NOT NULL,

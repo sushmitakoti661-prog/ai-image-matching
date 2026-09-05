@@ -19,6 +19,15 @@ const CATEGORY_SUBJECTS = {
   nature: ["mountain", "desert", "forest", "ocean", "waterfall", "lake", "nature"],
   vehicles: ["car", "motorcycle", "airplane", "ship", "boat", "train", "bicycle", "vehicle"]
 };
+const POST_SUBJECT_ALIASES = [
+  { phrase: "sports car", category: "vehicles", subject: "sports_car" },
+  { phrase: "golden retriever", category: "animals", subject: "dog" }
+];
+
+function containsTerm(text, term) {
+  const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`\\b${escapedTerm}(?:s)?\\b`).test(text);
+}
 
 function parseStoredVector(vector) {
   const parsed = typeof vector === "string" ? JSON.parse(vector) : vector;
@@ -53,15 +62,16 @@ function cosineSimilarity(firstVector, secondVector) {
 
 function inferPostSignals(post) {
   const text = `${post.title} ${post.content}`.toLowerCase();
+  const alias = POST_SUBJECT_ALIASES.find((candidate) => text.includes(candidate.phrase));
+  if (alias) {
+    return { category: alias.category, subject: alias.subject };
+  }
+
   const category = Object.keys(CATEGORY_SUBJECTS).find((candidate) => {
-    return text.includes(candidate) || CATEGORY_SUBJECTS[candidate].some((subject) => {
-      return text.includes(subject) || text.includes(`${subject}s`);
-    });
+    return containsTerm(text, candidate) || CATEGORY_SUBJECTS[candidate].some((subject) => containsTerm(text, subject));
   }) || null;
   const subject = category
-    ? CATEGORY_SUBJECTS[category].find((candidate) => {
-      return text.includes(candidate) || text.includes(`${candidate}s`);
-    }) || null
+    ? CATEGORY_SUBJECTS[category].find((candidate) => containsTerm(text, candidate)) || null
     : null;
 
   return { category, subject };

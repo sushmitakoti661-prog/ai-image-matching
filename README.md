@@ -156,5 +156,5 @@ npm run dev
 
 - [x] **Phase 1 — Design & Foundation:** Architecture, database schema, mismatch guard specifications, dataset planning, and verified base environment.
 - [ ] **Phase 2 — Image Understanding:** Real licensed image corpus, Vision AI integration (Gemini API & local test provider), Zod schema validation, low-confidence tagging, cost tracking, and batch processing. Local acceptance passes; full Gemini corpus verification is blocked by the current project quota.
-- [ ] **Phase 3 — Matching Engine:** Text embeddings, cosine similarity ranking, Mismatch Guard rules, and "No confident match" fallbacks.
-- [ ] **Phase 4 — Production Layer:** Human review workflow, 10-post evaluation benchmark, Top-1 precision reporting, and final evidence validation.
+- [x] **Phase 3 — Matching Engine:** Text embeddings, cosine similarity ranking, Mismatch Guard rules, and "No confident match" fallbacks.
+- [ ] **Phase 4 — Production Layer:** Human review workflow and 10-post evaluation benchmark implemented; measured Top-1 Precision is 80.00% (8/10), below the 90% target.

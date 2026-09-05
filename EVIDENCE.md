@@ -221,8 +221,18 @@ Evidence to add:
 
 ## Phase 4 — Production Layer
 
-Evidence to add:
-- Human review API execution log (`approved`/`rejected`)
-- 10-post evaluation dataset run
-- Top-1 Precision calculation ($\ge 90\%$)
-- Final API end-to-end demonstrations
+### Human Review
+- Review decisions are validated as `approved` or `rejected`.
+- `reviews.suggestion_id` is unique, and repeated decisions update the existing row through an `ON CONFLICT` upsert.
+- Phase 4 tests verified pending suggestions disappear after review and the review row ID remains stable across updates.
+
+### Evaluation Benchmark
+- Dataset: 10 labeled posts covering animals, food, nature, vehicles, pets, and an unrelated no-match case.
+- Negative filenames are actively checked: a case fails if a listed negative candidate is accepted.
+- `npm run evaluate` result: 8/10 cases passed.
+- Measured Top-1 Precision: 80.00%.
+- Remaining failures: desert survival selected `desert_oasis_sunset_2.jpg` instead of `desert_sahara_dunes_1.jpg`; golden retriever care selected `golden_retriever_running_2.jpg` instead of `golden_retriever_park_1.jpg`.
+- Both failures were same-subject, same-category photo-selection ranking ties (`desert` versus `desert`, and `golden retriever` versus `golden retriever`), not Mismatch Guard failures. Zero cross-category or cross-subject mismatches occurred across all 10 cases.
+- Root cause: the deterministic `local-hash-v6` embedding was used to avoid Phase 2's Gemini quota problem. It captures subject and category well, but cannot semantically distinguish fine-grained caption differences such as `park` versus `beach` as a real embedding API such as Gemini `text-embedding-004` could.
+- This is a genuine, documented constraint of the chosen approach, mirroring the Phase 2 Gemini quota limitation, and is not treated as a code defect.
+- The 90% Phase 4 precision target is not yet satisfied.

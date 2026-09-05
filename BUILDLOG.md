@@ -95,3 +95,36 @@
 - Phase 2 is now complete. Real-Gemini verification remains a documented, honest 
   limitation pending quota reset; local-provider processing satisfies the pipeline's 
   functional requirements.
+
+  ## 2026-09-05 — Phase 3: Matching Engine
+
+### Embedding Service
+- Built deterministic local embeddings (`local-hash-v6`) - avoids API quota risk 
+  entirely for this phase, unlike Phase 2's Gemini dependency.
+- First attempt used a hardcoded domain vocabulary (fox/wolf/dog/etc.) to force 
+  correct ranking - caught during review as non-generalizable, removed entirely.
+- Fixed properly via symmetric field-weighting: both post and image embeddings 
+  repeat their inferred subject/category terms 5x, so importance comes from field 
+  structure, not a fixed word list.
+
+### Matching & Mismatch Guard
+- Cosine similarity ranking + sequential guard: low-confidence check → category 
+  check → subject conflict check → 0.65 similarity threshold, per DESIGN.md.
+- Verified real separation on the fox/wolf/dog benchmark case:
+  - fox_woodland_1.jpg: 0.783 → accepted
+  - golden_retriever_park_1.jpg: 0.316 → rejected
+  - wolf_howling_1.jpg: 0.256 → rejected
+- 9/9 Phase 3 tests passing; Phase 2 regression suite still 8/8 passing.
+
+## 2026-09-05 — Phase 4: Production Layer
+
+- Added unique `reviews.suggestion_id` index and review upsert behavior so each suggestion has one current decision.
+- Added Zod validation, review service, and review API endpoints: `GET /suggestions/pending` and `POST /suggestions/:id/review`.
+- Added a validated 10-case evaluation dataset with explicit positive and negative filenames.
+- Added evaluation service and `npm run evaluate` benchmark CLI with measured Top-1 Precision.
+- Added Phase 4 test suite: 5/5 tests passing.
+- Final benchmark result: 8/10 cases passed, Top-1 Precision = 80.00%. Desert survival selected `desert_oasis_sunset_2.jpg` instead of the labeled Sahara image, and golden retriever care selected `golden_retriever_running_2.jpg` instead of the labeled park image.
+- Phase 4 precision target of 90% is not yet satisfied.
+- Both failures were same-subject, same-category photo-selection ranking ties (`desert` versus `desert`, and `golden retriever` versus `golden retriever`), not Mismatch Guard failures. Zero cross-category or cross-subject mismatches occurred across all 10 cases.
+- Root cause: the deterministic `local-hash-v6` embedding was used to avoid Phase 2's Gemini quota problem. It captures subject and category well, but cannot semantically distinguish fine-grained caption differences such as `park` versus `beach` as a real embedding API such as Gemini `text-embedding-004` could.
+- This is a genuine, documented constraint of the chosen approach, mirroring the Phase 2 Gemini quota limitation, and is not treated as a code defect.
