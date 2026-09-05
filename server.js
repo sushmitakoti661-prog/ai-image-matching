@@ -3,6 +3,8 @@ const express = require("express");
 
 const imageRoutes = require("./src/routes/imageRoutes");
 const costRoutes = require("./src/routes/costRoutes");
+const postRoutes = require("./src/routes/postRoutes");
+const matchingRoutes = require("./src/routes/matchingRoutes");
 
 const app = express();
 
@@ -20,6 +22,8 @@ app.get("/health", (req, res) => {
 // Mount routes
 app.use("/images", imageRoutes);
 app.use("/costs", costRoutes);
+app.use("/posts", postRoutes);
+app.use("/posts", matchingRoutes);
 
 const PORT = process.env.PORT || 3000;
 

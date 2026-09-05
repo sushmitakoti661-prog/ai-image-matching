@@ -43,6 +43,9 @@ CREATE TABLE IF NOT EXISTS embeddings (
 CREATE INDEX IF NOT EXISTS idx_embeddings_entity
 ON embeddings(entity_type, entity_id);
 
+CREATE UNIQUE INDEX IF NOT EXISTS idx_embeddings_entity_model_unique
+ON embeddings(entity_type, entity_id, model);
+
 CREATE TABLE IF NOT EXISTS suggestions (
   id SERIAL PRIMARY KEY,
   post_id INTEGER NOT NULL REFERENCES posts(id) ON DELETE CASCADE,

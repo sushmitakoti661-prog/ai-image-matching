@@ -11,7 +11,8 @@
     "images:populate": "node src/db/populateCorpus.js",
     "images:download": "node src/db/downloadCorpus.js",
     "images:process": "node src/jobs/processImages.js",
-    "test": "node test/phase2.test.js"
+    "test": "node test/phase2.test.js",
+    "test:phase3": "node test/phase3.test.js"
   },
   "keywords": [],
   "author": "",
